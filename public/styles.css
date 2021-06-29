@@ -1,0 +1,27 @@
+.same{
+    margin:20px 0px;
+}
+h1{
+    color: green;
+    
+}
+.lista{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+.b{
+    width: 100px;
+}
+.a{
+    width: 100px;
+}
+.navbar{
+    padding: 20px 0px;
+}
+.nav-item{
+    margin-right: 20px
+}
+.label{
+    display: block;
+}

@@ -1,0 +1,16 @@
+<%-include("layout/header")-%>
+
+    <div id="home" class="same">
+    <h1>Home</h1>
+    <p><%=home%></p>
+    </div> 
+    
+<div class="same">
+    <%newtext.forEach(function(post){%>
+    
+    <h1><%=post.title%></h1>
+    <p><%=post.blog%><a href="/<%=post.title%>">Read more</a></p>    
+    
+    <%})%>
+</div>
+ <%-include("layout/footer")-%>
