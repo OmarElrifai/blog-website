@@ -6,11 +6,14 @@
     </div> 
     
 <div class="same">
-    <%newtext.forEach(function(post){%>
-    
-    <h1><%=post.title%></h1>
-    <p><%=post.blog%><a href="/<%=post.title%>">Read more</a></p>    
-    
-    <%})%>
+<% blog.forEach(function(bl){%>
+  
+    <h1><%= bl.title %></h1> 
+    <% if(bl.blog.length>100){ %>
+    <p><%= bl.blog.substring(0,100) %>... <a href="/<%= bl.title %>">Read more</a></p>
+    <%}else{%>
+    <p> <%= bl.blog %> <a href="/<%= bl.title %>">Read more</a></p>
+    <%}%>
+<%    }) %>
 </div>
  <%-include("layout/footer")-%>

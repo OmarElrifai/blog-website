@@ -3,9 +3,27 @@ const app = express();
 const bodyparser = require("body-parser");
 const lodash = require("lodash");
 const truncate = require("truncate-html");
+const mongoose = require("mongoose");
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(express.static("public"));
-app.set("view engine","ejs")
+app.set("view engine","ejs");
+
+//database settings
+mongoose.connect('mongodb+srv://Rif:dolkadoz40@mflix.n3dih.mongodb.net/blogdb', {useNewUrlParser: true, useUnifiedTopology: true});
+
+const blogsSchema=new mongoose.Schema({
+    title:{
+        type:String,
+        required:[true,"title must be provided"]  
+    },
+    blog:{
+         type:String,
+        required:[true,"blog must be provided"] 
+    }
+});
+
+const blog=mongoose.model("blog",blogsSchema);
+//end 
 
 const hometext="Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
 
@@ -14,8 +32,7 @@ const abouttext="Hac habitasse platea dictumst vestibulum rhoncus est pellentesq
 const contacttext="Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 //const title=[];
-const text=[];
-const par=[];
+
 app.listen(process.env.PORT || 3000,function(){
     console.log("Server connected")
 });
@@ -24,9 +41,10 @@ app.listen(process.env.PORT || 3000,function(){
 app.get("/",function(req,res){
 //    res.render("index",{home:hometext,about:abouttext,contact:contacttext,newtitle:title,newtext:text});
     
- 
-    res.render("index",{home:hometext,about:truncate(abouttext,100),contact:truncate(contacttext,100),
-                        newtext:par});
+ blog.find(function(err,blogs){
+     res.render("index",{home:hometext,blog:blogs});
+ })
+    
 });
 
 
@@ -46,7 +64,9 @@ app.get("/compose",function(req,res){
 
 
 app.get("/:blog",function(req,res){
-    text.forEach(function(element){
+    blog.find(function(err,blogs){
+        
+    blogs.forEach(function(element){
         const title=lodash.lowerCase(element.title);
         const blog=lodash.lowerCase(req.params.blog);
         if(title==blog){
@@ -54,6 +74,9 @@ app.get("/:blog",function(req,res){
         }
 
     })
+        
+    })
+    
     
 })
 
@@ -61,15 +84,17 @@ app.get("/:blog",function(req,res){
 app.post("/",function(req,res){
 //    title.push(req.body.title);
 //    text.push(req.body.blog);
-    const post={
+    const post=new blog({
         title:req.body.title,
         blog:req.body.blog
-    };
-    const post2={
-        title:req.body.title,
-        blog:truncate(req.body.blog,100)
-    };
-    text.push(post)
-    par.push(post2)
+        });
+    post.save();
+//    const post2={
+//        title:req.body.title,
+//        blog:truncate(req.body.blog,100)
+//    };
+   blog.find(function(err,blogs){
+       console.log(blogs)
+   })
     res.redirect("/")
 })
